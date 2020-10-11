@@ -1,31 +1,80 @@
 import React,{useState,useEffect} from 'react';
 import './App.css';
-import Post from "./Post"
+import Post from "./Post";
+import {db} from "./Firebase";
+import { makeStyles } from '@material-ui/core/styles';
+import Modal from '@material-ui/core/Modal';
+import { Button , Input} from '@material-ui/core';
+function getModalStyle() {
+  const top = 50;
+  const left = 50;
+  return {
+    top: `${top}%`,
+    left: `${left}%`,
+    transform: `translate(-${top}%, -${left}%)`,
+  };
+}
+const useStyles = makeStyles((theme) => ({
+  paper: {
+    position: 'absolute',
+    width: 400,
+    backgroundColor: theme.palette.background.paper,
+    border: '2px solid #000',
+    boxShadow: theme.shadows[5],
+    padding: theme.spacing(2, 4, 3),
+  },
+}));
 function App() {
-  const [posts,setPosts]=useState([{ username:"Cleaver", caption:"  wao its great", 
-  imageurl:"https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcTWnDVmN-iozShkwiyZlbfd5nRcvJBSFA-38g&usqp=CAU"},
-  {username:"v._aibhav", 
-caption:"  how it works", 
-  imageurl:"https://i.pinimg.com/736x/3a/4b/af/3a4baf28202e42fe5a79492cea600e67.jpg"},
-  {username:"a_k_s", 
-  caption:"  so many posts" ,
-  imageurl:"https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcRR3axgGmYgqGxqzgHuQczuEKU-QEJprIQoxQ&usqp=CAU"},
-  {username:"sunny", 
-  caption:"  how to build",
-   imageurl:"https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcSQ8WMRL2KG_zFwnm0xFTH9oVuMcPxYn3pQyQ&usqp=CAU"},
-  ]);
+  const classes=useStyles();
+  const [posts,setPosts]=useState([]);
+const [open,setOpen]=useState(false); 
+const [username,setUsername]=useState(''); 
+const [password,setPassword]=useState(''); 
+const [email,setEmail]=useState(""); 
+const[modalStyle]=useState(getModalStyle);
+  useEffect(()=>{
+    db.collection('posts').onSnapshot(snapshot=>{
+setPosts(snapshot.docs.map(doc=>({
+  id:doc.id,
+  post:doc.data()})));
+    })
+  },[]);
+  const SignUp=(event)=>{
+
+  }
   return (
     <div className="App">
+    <Modal
+    open={open}
+    onClose={()=>setOpen(false)}
+  >
+  <div style={modalStyle} className={classes.paper}>
+<center>
+<img className="app__headerImage"
+src="https://cdn.pixabay.com/photo/2016/08/01/21/00/icon-1562136__340.png"
+alt=""
+/>
+<Input type="text" placeholder="Username" value={username} required 
+onChange={(e)=>setUsername(e.target.value)}/>
+<Input type="text" placeholder="Email" value={email} required 
+onChange={(e)=>setEmail(e.target.value)}/>
+<Input type="password" placeholder="Password" value={password}  required 
+onChange={(e)=>setPassword(e.target.value)}/>
+<Button type="submit" onClick={SignUp}>Sign Up</Button>
+</center>
+</div>
+  </Modal>
      {/*Header*/ }
     <div className="app__header">
 <img className="app__headerImage" 
 src="https://www.instagram.com/static/images/web/mobile_nav_type_logo.png/735145cfe0a4.png" alt=""/>
 </div>
+<Button onClick={()=>setOpen(true)}>Sign Up</Button>
 {/*Story*/ }
       {/*Post*/ }
       {
-        posts.map(post=>(
-          <Post username={post.username} imageurl={post.imageurl} caption={post.caption}/>
+        posts.map(({id,post})=>(
+          <Post key={id} username={post.username} imageurl={post.imageurl} caption={post.caption}/>
         ))
       }
 {/*post */ }
