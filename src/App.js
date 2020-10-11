@@ -12,7 +12,10 @@ src="https://www.instagram.com/static/images/web/mobile_nav_type_logo.png/735145
 {/*Story*/ }
       {/*Post*/ }
 <Post />
-      {/*post */ }
+<Post />
+<Post />
+<Post />
+{/*post */ }
       {/*post*/ }
       {/**/ }
     </div>
